@@ -24,36 +24,38 @@ fi
 
 
 # -----------------------------------------------------------------------------
+# common defintions
+# -----------------------------------------------------------------------------
+scriptName="$(basename $0)"
+scriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# check parameters
+if [ -z "$scriptName" ]; then
+	echo -e "failed (could not determine script name)."
+	exit 1;
+fi
+if [ -z "$scriptPath" ]; then
+	echo -e "failed (could not determine script path)."
+	exit 1;
+fi
+
+# set login script location and path
+loginScriptLocation="~/Library/LaunchAgents"
+loginScriptPath="$loginScriptLocation/schedule$scriptName"
+
+
+# -----------------------------------------------------------------------------
 # install routine
 # -----------------------------------------------------------------------------
 if [ "$1" = "install" ]; then
 	echo -ne "Installing..."
-
-	# determine script name and path
-	scriptName="$(basename $0)"
-	scriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-	# check parameters
-	if [ -z "$scriptName" ]; then
-		echo -e "failed (could not determine script name)."
-		exit 1;
-	fi
-	if [ -z "$scriptPath" ]; then
-		echo -e "failed (could not determine script path)."
-		exit 1;
-	fi
-	if [ -z "$2" ]; then
-		echo -e "failed (specify desired picture file)."
-		exit 1;
-	fi
 
 	# execute every day one minute after 8 am and 9 am
 	crontab -l | grep -v $scriptName | crontab -
 	(crontab -l; echo "1 8,9 * * * $scriptPath/$scriptName $2 >/dev/null 2>&1" ) | crontab -
 
 	# execute when user loggin in
-	loginScriptPath="~/.kde/env/schedule$scriptName"
-	pushd ~/.kde/env/ 1>/dev/null 2>&1
+	pushd $loginScriptLocation 1>/dev/null 2>&1
 		echo "#!/bin/bash" 1>"schedule$scriptName" 2>/dev/null
 		echo "echo \"$scriptPath/$scriptName $2\" | at now +1 min -M" 1>>"schedule$scriptName" 2>/dev/null
 		chmod +x "schedule$scriptName"
@@ -70,20 +72,6 @@ fi
 # -----------------------------------------------------------------------------
 if [ "$1" = "uninstall" ]; then
 	echo -ne "Uninstalling..."
-
-	# determine script name and path
-	scriptName="$(basename $0)"
-	scriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-	# check parameters
-	if [ -z "$scriptName" ]; then
-		echo -e "failed (could not determine script name)."
-		exit 1;
-	fi
-	if [ -z "$scriptPath" ]; then
-		echo -e "failed (could not determine script path)."
-		exit 1;
-	fi
 
 	# uninstall crontab job
 	crontab -l | grep -v $scriptName | crontab -
