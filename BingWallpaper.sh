@@ -111,11 +111,19 @@ prefixUrl="http://www.bing.com"
 
 # Define the market of the picture
 # (en-WW, en-US, zh-CN, ja-JP, en-AU, en-UK, de-DE, en-NZ, en-CA)
-market="en-WW"
+if [ -z "$BING_MARKET" ] ; then
+	market="en-WW"
+else
+	market=$BING_MARKET
+fi
 
 # Define picture index
 # ('0' means today, '1' means yesterday, ...)
-index="0"
+if [ -z "$BING_INDEX" ] ; then 
+	index="0"
+else
+	index=$BING_INDEX
+fi
 #index="$(date +"%M")"
 
 # $xmlURL is needed to get the xml data from which
