@@ -95,11 +95,11 @@ if [ -z "$1" ]; then
 	exit 1;
 fi
 
-# define log name
-logFilePath="$1.log"
-
 # define picture path
-pictureFilePath=$1
+pictureFilePath="$(cd $(dirname $1) ; pwd)/$(basename $1)"
+
+# define log name
+logFilePath="${pictureFilePath}.log"
 
 # create log file and write header
 echo "" 1>$logFilePath 2>&1
