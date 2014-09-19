@@ -28,15 +28,17 @@ fi
 echo "success."
 
 # check if directory is available
-echo -n "Creating target directory ... "
-if ! [ -f ./wallpapers ]; then
-	mkdir ./wallpapers
+echo -n "Checking for target directory ... "
+if ! [ -d ./wallpapers ]; then
+	mkdir ./wallpapers 1>/dev/null 2>&1
 	if [[ $? != 0 ]]; then
-		echo "failed."
+		echo "failed to create."
 		exit 2;
 	fi
+	echo "created."
+else
+	echo "success."
 fi
-echo "success."
 
 # download current wallpaper
 echo -n "Downloading wallpaper from bing.com ... "
